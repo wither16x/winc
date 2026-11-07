@@ -1,0 +1,9 @@
+import "std.io";
+import "std.status";
+
+int main() {
+    const char *name = "John Doe";
+    unsigned int age = 42;
+    println("Hello, world! My name is %s and I am %u years old!\n", name, age);
+    return SUCCESS;
+}

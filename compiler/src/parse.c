@@ -3532,14 +3532,17 @@ static Token *parse_import(Token *tok, bool is_pub)
         info->scope->next = scope;
         hashmap_put(&imported_modules, path, info);
 
-        Token *module_tokens = preprocess(tokenize_file(path));
-        if (!module_tokens)
-            error_tok(path_tok, "cannot process module: %s", path);
+        Token *tokens = tokenize_file(path);
+        if (!tokens)
+            error_tok(path_tok, "cannot tokenize module: %s", path);
+        Token *raw = preprocess(tokens);
+        if (!raw)
+            error_tok(path_tok, "cannot preprocess module: %s", path);
 
         Scope *saved = scope;
         Scope *saved_root = root_scope;
         scope = root_scope = info->scope;
-        parse_toplevel(module_tokens);
+        parse_toplevel(raw);
         scope = saved;
         root_scope = saved_root;
         info->parsed = true;
