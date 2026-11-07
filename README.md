@@ -71,3 +71,6 @@ wincc --project pathname # other arguments
 * Unsigned sized types: `u8`, `u16`, `u32`, `u64`
 * Signed sized types: `s8`, `s16`, `s32`, `s64`
 * Size types: `usize`, `ssize`
+
+## Attributes
+Winc provides a clean syntax for using attributes. To use them, follow the following pattern: `[[attr, ...]]`. You can also give arguments to attributes using `()` like you would do in a function call.

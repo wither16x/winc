@@ -2689,38 +2689,38 @@ static void struct_members(Token **rest, Token *tok, Type *ty) {
   ty->members = head.next;
 }
 
-// attribute = ("__attribute__" "(" "(" "packed" ")" ")")*
+// attribute = ("[" "[" "packed" "]" "]"*
 static Token *attribute_list(Token *tok, Type *ty) {
-  while (consume(&tok, tok, "__attribute__")) {
-    tok = skip(tok, "(");
-    tok = skip(tok, "(");
+    while (equal(tok, "[") && equal(tok->next, "[")) {
+        tok = skip(tok, "[");
+        tok = skip(tok, "[");
 
-    bool first = true;
+        bool first = true;
 
-    while (!consume(&tok, tok, ")")) {
-      if (!first)
-        tok = skip(tok, ",");
-      first = false;
+        while (!consume(&tok, tok, "]")) {
+            if (!first)
+                tok = skip(tok, ",");
+            first = false;
 
-      if (consume(&tok, tok, "packed")) {
-        ty->is_packed = true;
-        continue;
-      }
+            if (consume(&tok, tok, "packed")) {
+                ty->is_packed = true;
+                continue;
+            }
 
-      if (consume(&tok, tok, "aligned")) {
-        tok = skip(tok, "(");
-        ty->align = const_expr(&tok, tok);
-        tok = skip(tok, ")");
-        continue;
-      }
+            if (consume(&tok, tok, "aligned")) {
+                tok = skip(tok, "(");
+                ty->align = const_expr(&tok, tok);
+                tok = skip(tok, ")");
+                continue;
+            }
 
-      error_tok(tok, "unknown attribute");
+            error_tok(tok, "unknown attribute");
+        }
+
+        tok = skip(tok, "]");
     }
 
-    tok = skip(tok, ")");
-  }
-
-  return tok;
+    return tok;
 }
 
 // struct-union-decl = attribute? ident? ("{" struct-members)?

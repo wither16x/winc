@@ -170,7 +170,7 @@ static bool is_keyword(Token *tok) {
       "unsigned", "const", "volatile", "auto", "register", "restrict",
       "__restrict", "__restrict__", "_Noreturn", "float", "double",
       "typeof", "asm", "_Thread_local", "__thread", "_Atomic",
-      "__attribute__", "import", "u8", "u16", "u32", "u64", "s8", "s16", "s32",
+      "import", "u8", "u16", "u32", "u64", "s8", "s16", "s32",
       "s64", "usize", "ssize", "true", "false", "pub"
     };
 
