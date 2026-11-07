@@ -1653,9 +1653,7 @@ static Node *stmt(Token **rest, Token *tok) {
 
   if (equal(tok, "if")) {
     Node *node = new_node(ND_IF, tok);
-    tok = skip(tok->next, "(");
-    node->cond = expr(&tok, tok);
-    tok = skip(tok, ")");
+    node->cond = expr(&tok, tok->next);
     node->then = stmt(&tok, tok);
     if (equal(tok, "else"))
       node->els = stmt(&tok, tok->next);
@@ -1665,9 +1663,7 @@ static Node *stmt(Token **rest, Token *tok) {
 
   if (equal(tok, "switch")) {
     Node *node = new_node(ND_SWITCH, tok);
-    tok = skip(tok->next, "(");
-    node->cond = expr(&tok, tok);
-    tok = skip(tok, ")");
+    node->cond = expr(&tok, tok->next);
 
     Node *sw = current_switch;
     current_switch = node;
@@ -1723,7 +1719,6 @@ static Node *stmt(Token **rest, Token *tok) {
 
   if (equal(tok, "for")) {
     Node *node = new_node(ND_FOR, tok);
-    tok = skip(tok->next, "(");
 
     enter_scope();
 
@@ -1740,12 +1735,11 @@ static Node *stmt(Token **rest, Token *tok) {
     }
 
     if (!equal(tok, ";"))
-      node->cond = expr(&tok, tok);
+      node->cond = expr(&tok, tok->next);
     tok = skip(tok, ";");
 
-    if (!equal(tok, ")"))
+    if (!equal(tok, "{"))
       node->inc = expr(&tok, tok);
-    tok = skip(tok, ")");
 
     node->then = stmt(rest, tok);
 
@@ -1757,9 +1751,7 @@ static Node *stmt(Token **rest, Token *tok) {
 
   if (equal(tok, "while")) {
     Node *node = new_node(ND_FOR, tok);
-    tok = skip(tok->next, "(");
-    node->cond = expr(&tok, tok);
-    tok = skip(tok, ")");
+    node->cond = expr(&tok, tok->next);
 
     char *brk = brk_label;
     char *cont = cont_label;
@@ -1787,9 +1779,7 @@ static Node *stmt(Token **rest, Token *tok) {
     cont_label = cont;
 
     tok = skip(tok, "while");
-    tok = skip(tok, "(");
-    node->cond = expr(&tok, tok);
-    tok = skip(tok, ")");
+    node->cond = expr(&tok, tok->next);
     *rest = skip(tok, ";");
     return node;
   }

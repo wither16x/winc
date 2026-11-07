@@ -1,5 +1,5 @@
 noreturn void f() {
-    while (true);
+    while true {}
 }
 
 int main() {

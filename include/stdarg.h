@@ -11,20 +11,20 @@ typedef struct {
 typedef __va_elem va_list[1];
 
 #define va_start(ap, last) \
-  do { *(ap) = *(__va_elem *)__va_area__; } while (0)
+  do { *(ap) = *(__va_elem *)__va_area__; } while 0
 
 #define va_end(ap)
 
 static void *__va_arg_mem(__va_elem *ap, int sz, int align) {
   void *p = ap->overflow_arg_area;
-  if (align > 8)
+  if align > 8
     p = (p + 15) / 16 * 16;
   ap->overflow_arg_area = ((unsigned long)p + sz + 7) / 8 * 8;
   return p;
 }
 
 static void *__va_arg_gp(__va_elem *ap, int sz, int align) {
-  if (ap->gp_offset >= 48)
+  if ap->gp_offset >= 48
     return __va_arg_mem(ap, sz, align);
 
   void *r = ap->reg_save_area + ap->gp_offset;
@@ -33,7 +33,7 @@ static void *__va_arg_gp(__va_elem *ap, int sz, int align) {
 }
 
 static void *__va_arg_fp(__va_elem *ap, int sz, int align) {
-  if (ap->fp_offset >= 112)
+  if ap->fp_offset >= 112
     return __va_arg_mem(ap, sz, align);
 
   void *r = ap->reg_save_area + ap->fp_offset;

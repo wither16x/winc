@@ -7,7 +7,7 @@ pub import "modules.person_struct";
 
 pub struct person *create_person(const char *name, unsigned int age) {
     struct person *p = calloc(1, sizeof(*p));
-    if (!p)
+    if !p
         return NULL;
 
     strncpy(p->name, name, strlen(name));
