@@ -94,6 +94,7 @@ static Obj *locals;
 static Obj *globals;
 
 static Scope *scope = &(Scope){};
+static Scope *root_scope;
 
 // Points to the function object the parser is currently parsing.
 static Obj *current_fn;
@@ -2905,7 +2906,7 @@ static Node *postfix(Token **rest, Token *tok) {
     Type *ty = typename(&tok, tok->next);
     tok = skip(tok, ")");
 
-    if (scope->next == NULL) {
+    if (scope == root_scope) {
       Obj *var = new_anon_gvar(ty);
       gvar_initializer(rest, tok, var);
       return new_var_node(var, start);
@@ -3283,16 +3284,8 @@ static void resolve_goto_labels(void) {
   gotos = labels = NULL;
 }
 
-static Scope *find_root_scope(void)
-{
-    Scope *sc = scope;
-    while (sc->next)
-        sc = sc->next;
-    return sc;
-}
-
 static Obj *find_func(char *name) {
-  Scope *sc = find_root_scope();
+  Scope *sc = root_scope;
 
   VarScope *sc2 = hashmap_get(&sc->vars, name);
   if (sc2 && sc2->var && sc2->var->is_function)
@@ -3547,7 +3540,8 @@ static Token *parse_import(Token *tok, bool is_pub)
     struct module_info *info = hashmap_get(&imported_modules, path);
     if (!info) {
         info = calloc(1, sizeof(*info));
-        info->scope = calloc(1, sizeof(Scope));
+        info->scope = calloc(1, sizeof(*info->scope));
+        info->scope->next = scope;
         hashmap_put(&imported_modules, path, info);
 
         Token *module_tokens = preprocess(tokenize_file(path));
@@ -3555,9 +3549,11 @@ static Token *parse_import(Token *tok, bool is_pub)
             error_tok(path_tok, "cannot process module: %s", path);
 
         Scope *saved = scope;
-        scope = info->scope;
+        Scope *saved_root = root_scope;
+        scope = root_scope = info->scope;
         parse_toplevel(module_tokens);
         scope = saved;
+        root_scope = saved_root;
         info->parsed = true;
     } else if (!info->parsed) {
         error_tok(path_tok, "circular import: %s", path);
@@ -3603,6 +3599,7 @@ static void parse_toplevel(Token *tok) {
 Obj *parse(Token *tok) {
   declare_builtin_functions();
   globals = NULL;
+  root_scope = scope;
 
   parse_toplevel(tok);
 
