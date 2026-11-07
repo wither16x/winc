@@ -2,6 +2,7 @@
 #include "wincc.h"
 
 static Obj *current_fn;
+static bool in_return = false;
 
 static void check_expr(Node *node);
 static void check_stmt(Node *node);
@@ -21,11 +22,24 @@ static void check_expr(Node *node)
         return;
 
     case ND_NEG:
+        return;
     case ND_NOT:
+        return;
     case ND_BITNOT:
+        return;
     case ND_MEMBER:
+        return;
     case ND_DEREF:
-    case ND_ADDR:
+        return;
+    case ND_ADDR: {
+        Node *nd = node->lhs;
+        while (nd->kind == ND_MEMBER)
+            nd = nd->lhs;
+        if (nd->kind == ND_VAR && nd->var->is_local && nd->var->ty->kind != TY_VLA && in_return)
+            error_tok(node->tok, "cannot return address of local variable");
+        return;
+    }
+
     case ND_CAST:
         check_expr(node->lhs);
         return;
@@ -135,7 +149,9 @@ static void check_stmt(Node *node)
         return;
 
     case ND_RETURN:
+        in_return = true;
         check_expr(node->lhs);
+        in_return = false;
         return;
 
     case ND_EXPR_STMT:

@@ -1,0 +1,12 @@
+#include <stdio.h>
+
+/*int foo() {
+    int a = 42;
+    return &a;
+}*/
+
+int main() {
+    int x = 42;// foo();
+    printf("x = %d\n", x);
+    return 0;
+}
