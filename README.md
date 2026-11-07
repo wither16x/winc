@@ -30,7 +30,7 @@ pub struct person {
 
 pub struct person *create_person(const char *name, unsigned int age) {
     struct person *p = calloc(1, sizeof(*p));
-    if (!p)
+    if !p
         return NULL;
 
     strncpy(p->name, name, strlen(name));
@@ -49,7 +49,7 @@ pub void kill_person(struct person *p) {
 
 import "person";
 
-int main(void) {
+int main() {
     struct person *p = create_person("John Doe", 42);
     printf("Hi! My name is %s and I am %u years old!\n", p->name, p->age);
     kill_person(p);
