@@ -1,0 +1,2 @@
+pub const int SUCCESS = 0;
+pub const int FAIL = 1;

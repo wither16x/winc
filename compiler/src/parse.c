@@ -3520,7 +3520,13 @@ static Token *parse_import(Token *tok, bool is_pub)
         if (tok->str[i] == '.')
             tok->str[i] = '/';
     }
-    char *path = format("%s/%s.wc", project_dir, tok->str);
+    char *path= NULL;
+    if (tok->str[0] == 's' && tok->str[1] == 't' && tok->str[2] == 'd')
+        path = format("%s/.winc/%s.wc", getenv("HOME"), tok->str);
+    else if (tok->str[0] == 'c' && tok->str[1] == 'o' && tok->str[2] == 'r' && tok->str[3] == 'e')
+        path = format("%s/.winc/%s.wc", getenv("HOME"), tok->str);
+    else
+        path = format("%s/%s.wc", project_dir, tok->str);
     tok = tok->next;
 
     tok = skip(tok, ";");
@@ -3547,7 +3553,7 @@ static Token *parse_import(Token *tok, bool is_pub)
         root_scope = saved_root;
         info->parsed = true;
     } else if (!info->parsed) {
-        error_tok(path_tok, "circular import: %s", path);
+        error_tok(path_tok, "cyclic import: %s", path);
     }
 
     export_scope(info->scope, scope, is_pub, path_tok);
