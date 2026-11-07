@@ -14,6 +14,7 @@ You can find a list of custom features below.
 ### Modules
 Even though `#include` is still available for C headers, modules are a cleaner way to organize the code.  
 They are evaluated at compile-time and there is no need to split the interface and the implementation in several files. Also there is no need for header guards or `#pragma once`: a module is never evaluated twice.
+In a module, all symbols are private by default. To export a symbol, place `pub` in front of its definition. This only works with global symbols.
 
 Here is an example:
 ```wc
@@ -22,12 +23,12 @@ Here is an example:
 #include <stdlib.h>
 #include <string.h>
 
-struct person {
+pub struct person {
     char name[25];
     unsigned int age;
 };
 
-struct person *create_person(const char *name, unsigned int age) {
+pub struct person *create_person(const char *name, unsigned int age) {
     struct person *p = calloc(1, sizeof(*p));
     if (!p)
         return NULL;
@@ -37,7 +38,7 @@ struct person *create_person(const char *name, unsigned int age) {
     return p;
 }
 
-void kill_person(struct person *p) {
+pub void kill_person(struct person *p) {
     free(p);
 }
 ```
@@ -64,3 +65,9 @@ To compile the code, you need to tell the compiler about your project location.
 ```sh
 wincc --project pathname # other arguments
 ```
+
+### New types
+* Boolean types: `bool`, with the keywords `true` and `false`
+* Unsigned sized types: `u8`, `u16`, `u32`, `u64`
+* Signed sized types: `s8`, `s16`, `s32`, `s64`
+* Size types: `usize`, `ssize`
