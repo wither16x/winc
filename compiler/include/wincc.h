@@ -291,6 +291,8 @@ struct Node {
 Node *new_cast(Node *expr, Type *ty);
 int64_t const_expr(Token **rest, Token *tok);
 Obj *parse(Token *tok);
+bool is_const_expr(Node *node);
+int64_t eval(Node *node);
 
 //
 // type.c
@@ -471,6 +473,11 @@ void hashmap_delete2(HashMap *map, char *key, int keylen);
 void hashmap_foreach(HashMap *map, void (*fn)(char *key, int keylen, void *val, void *ctx),
     void *ctx);
 void hashmap_test(void);
+
+//
+// checks.c
+//
+void check_program(Obj *prog);
 
 //
 // main.c
