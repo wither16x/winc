@@ -1,0 +1,13 @@
+**/*~
+**/\#*
+**/*.o
+**/*.s
+**/a.out
+/tmp*
+/thirdparty
+/wincc
+/test/*.exe
+/stage2
+compile_commands.json
+.cache/
+/compiler/obj/

@@ -1,0 +1,15 @@
+#include <stdio.h>
+#include <assert.h>
+
+import "modules.math";
+
+int main() {
+    assert(addi(3, 4) == 7);
+    assert(subi(10, 5) == 5);
+    assert(muli(3, 6) == 18);
+    assert(divi(70, 10) == 7);
+
+    printf("Modules are working!\n");
+
+    return 0;
+}

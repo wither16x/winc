@@ -1,0 +1,39 @@
+// TODO
+
+/*#include <assert.h>
+
+generic<> int foo() {
+    return 42;
+}
+
+generic<T> struct position {
+    T x;
+    T y;
+};
+
+generic<T> struct position<T>
+add_positions(struct position<T> *p1, struct position<T> *p2) {
+    struct position<T> new_pos = {
+        .x = p1->x + p2->x,
+        .y = p1->y + p2->y
+    };
+    return new_pos;
+}
+
+generic<S, C> int cmp_first_char_str(S str, C ch) {
+    return str[0] == ch;
+}
+
+int main() {
+    struct position<int> p1 = {10, 5};
+    struct position<int> p2 = {15, 12};
+
+    struct position<int> p3 = add_positions<int>(p1, p2);
+    assert(p3.x == 25 && p3.y == 17);
+
+    assert(cmp_first_char_str<const char*, char>("hello", 'h') == 1);
+
+    return 0;
+}*/
+
+int main() {return 0;}

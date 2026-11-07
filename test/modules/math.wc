@@ -1,0 +1,17 @@
+pub int addi(int a, int b) {
+    return a + b;
+}
+
+pub int subi(int a, int b) {
+    return a - b;
+}
+
+pub int muli(int a, int b) {
+    return a * b;
+}
+
+pub int divi(int a, int b) {
+    if (b == 0)
+        return 0;
+    return a / b;
+}

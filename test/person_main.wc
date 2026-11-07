@@ -1,0 +1,13 @@
+// main.wc
+
+#include <stdio.h>
+
+import "modules.person";
+
+int main(void) {
+    struct person *p = create_person("John Doe", 42);
+    printf("Hi! My name is %s and I am %u years old!\n", p->name, p->age);
+    kill_person(p);
+
+    return 0;
+}
