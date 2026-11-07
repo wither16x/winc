@@ -1,0 +1,7 @@
+noreturn void f() {
+    while (true);
+}
+
+int main() {
+    return 0;
+}

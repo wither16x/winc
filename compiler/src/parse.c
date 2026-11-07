@@ -382,7 +382,7 @@ static void push_tag_scope(Token *tok, Type *ty) {
 //             | struct-decl | union-decl | typedef-name
 //             | enum-specifier | typeof-specifier
 //             | "const" | "volatile" | "auto" | "register" | "restrict"
-//             | "__restrict" | "__restrict__" | "_Noreturn" | "u8"
+//             | "__restrict" | "__restrict__" | "noreturn" | "u8"
 //             | "u16" | "u32" | "u64" | "s8" | "s16" | "s32" | "s64"
 //             | "usize" | "ssize")+
 //
@@ -467,7 +467,7 @@ static Type *declspec(Token **rest, Token *tok, VarAttr *attr) {
     if (consume(&tok, tok, "const") || consume(&tok, tok, "volatile") ||
         consume(&tok, tok, "auto") || consume(&tok, tok, "register") ||
         consume(&tok, tok, "restrict") || consume(&tok, tok, "__restrict") ||
-        consume(&tok, tok, "__restrict__") || consume(&tok, tok, "_Noreturn"))
+        consume(&tok, tok, "__restrict__") || consume(&tok, tok, "noreturn"))
       continue;
 
     if (equal(tok, "_Atomic")) {
@@ -1590,7 +1590,7 @@ static bool is_typename(Token *tok) {
       "void", "bool", "char", "short", "int", "long", "struct", "union",
       "typedef", "enum", "static", "extern", "_Alignas", "signed", "unsigned",
       "const", "volatile", "auto", "register", "restrict", "__restrict",
-      "__restrict__", "_Noreturn", "float", "double", "typeof", "inline",
+      "__restrict__", "noreturn", "float", "double", "typeof", "inline",
       "_Thread_local", "__thread", "_Atomic", "u8", "u16", "u32", "u64",
       "s8", "s16", "s32", "s64", "usize", "ssize", "pub"
     };

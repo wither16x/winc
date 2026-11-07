@@ -168,7 +168,7 @@ static bool is_keyword(Token *tok) {
       "enum", "static", "goto", "break", "continue", "switch", "case",
       "default", "extern", "_Alignof", "_Alignas", "do", "signed",
       "unsigned", "const", "volatile", "auto", "register", "restrict",
-      "__restrict", "__restrict__", "_Noreturn", "float", "double",
+      "__restrict", "__restrict__", "noreturn", "float", "double",
       "typeof", "asm", "_Thread_local", "__thread", "_Atomic",
       "import", "u8", "u16", "u32", "u64", "s8", "s16", "s32",
       "s64", "usize", "ssize", "true", "false", "pub"
