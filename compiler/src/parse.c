@@ -1617,13 +1617,13 @@ static Node *asm_stmt(Token **rest, Token *tok) {
 }
 
 // stmt = "return" expr? ";"
-//      | "if" "(" expr ")" stmt ("else" stmt)?
-//      | "switch" "(" expr ")" stmt
+//      | "if" expr stmt ("else" stmt)?
+//      | "switch" expr stmt
 //      | "case" const-expr ("..." const-expr)? ":" stmt
 //      | "default" ":" stmt
-//      | "for" "(" expr-stmt expr? ";" expr? ")" stmt
-//      | "while" "(" expr ")" stmt
-//      | "do" stmt "while" "(" expr ")" ";"
+//      | "for" expr-stmt expr? ";" expr? stmt
+//      | "while" expr stmt
+//      | "do" stmt "while" expr ";"
 //      | "asm" asm-stmt
 //      | "goto" (ident | "*" expr) ";"
 //      | "break" ";"
@@ -1725,11 +1725,11 @@ static Node *stmt(Token **rest, Token *tok) {
     brk_label = node->brk_label = new_unique_name();
     cont_label = node->cont_label = new_unique_name();
 
-    if (is_typename(tok)) {
-      Type *basety = declspec(&tok, tok, NULL);
-      node->init = declaration(&tok, tok, basety, NULL);
+    if (is_typename(tok->next)) {
+      Type *basety = declspec(&tok->next, tok->next, NULL);
+      node->init = declaration(&tok->next, tok->next, basety, NULL);
     } else {
-      node->init = expr_stmt(&tok, tok);
+      node->init = expr_stmt(&tok->next, tok->next);
     }
 
     if (!equal(tok, ";"))
