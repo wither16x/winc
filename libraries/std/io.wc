@@ -25,6 +25,12 @@ pub void vprint(const char *fmt, va_list args) {
             print_string(s);
             break;
         }
+
+        default: {
+            const char *s = "(unsupported)";
+            print_string(s);
+            break;
+        }
         }
     }
 }
