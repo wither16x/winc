@@ -1,0 +1,7 @@
+pub usize cstr_len(const char *str) {
+    usize len = 0;
+    while str[len] != '\0' {
+        ++len;
+    }
+    return len;
+}

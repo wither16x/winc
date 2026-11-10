@@ -1715,37 +1715,38 @@ static Node *stmt(Token **rest, Token *tok) {
     return node;
   }
 
-  if (equal(tok, "for")) {
-    Node *node = new_node(ND_FOR, tok);
+    if (equal(tok, "for")) {
+        Node *node = new_node(ND_FOR, tok);
+        tok = tok->next;
 
-    enter_scope();
+        enter_scope();
 
-    char *brk = brk_label;
-    char *cont = cont_label;
-    brk_label = node->brk_label = new_unique_name();
-    cont_label = node->cont_label = new_unique_name();
+        char *brk = brk_label;
+        char *cont = cont_label;
+        brk_label = node->brk_label = new_unique_name();
+        cont_label = node->cont_label = new_unique_name();
 
-    if (is_typename(tok->next)) {
-      Type *basety = declspec(&tok->next, tok->next, NULL);
-      node->init = declaration(&tok->next, tok->next, basety, NULL);
-    } else {
-      node->init = expr_stmt(&tok->next, tok->next);
+        if (is_typename(tok)) {
+            Type *basety = declspec(&tok, tok, NULL);
+            node->init = declaration(&tok, tok, basety, NULL);
+        } else {
+            node->init = expr_stmt(&tok, tok);
+        }
+
+        if (!equal(tok, ";"))
+            node->cond = expr(&tok, tok);
+        tok = skip(tok, ";");
+
+        if (!equal(tok, "{"))
+            node->inc = expr(&tok, tok);
+
+        node->then = stmt(rest, tok);
+
+        leave_scope();
+        brk_label = brk;
+        cont_label = cont;
+        return node;
     }
-
-    if (!equal(tok, ";"))
-      node->cond = expr(&tok, tok->next);
-    tok = skip(tok, ";");
-
-    if (!equal(tok, "{"))
-      node->inc = expr(&tok, tok);
-
-    node->then = stmt(rest, tok);
-
-    leave_scope();
-    brk_label = brk;
-    cont_label = cont;
-    return node;
-  }
 
   if (equal(tok, "while")) {
     Node *node = new_node(ND_FOR, tok);
@@ -2445,6 +2446,9 @@ static Node *new_add(Node *lhs, Node *rhs, Token *tok) {
     rhs = tmp;
   }
 
+  if (!lhs->ty->base)
+    error_tok(tok, "invalid operands");
+
   // VLA + num
   if (lhs->ty->base->kind == TY_VLA) {
     rhs = new_binary(ND_MUL, rhs, new_var_node(lhs->ty->base->vla_size, tok), tok);
@@ -2464,6 +2468,9 @@ static Node *new_sub(Node *lhs, Node *rhs, Token *tok) {
   // num - num
   if (is_numeric(lhs->ty) && is_numeric(rhs->ty))
     return new_binary(ND_SUB, lhs, rhs, tok);
+
+  if (!lhs->ty->base)
+    error_tok(tok, "invalid operands");
 
   // VLA + num
   if (lhs->ty->base->kind == TY_VLA) {
@@ -3346,7 +3353,7 @@ static Token *function(Token *tok, Type *basety, VarAttr *attr) {
   fn->params = locals;
 
   if (ty->is_variadic)
-    fn->va_area = new_lvar("__va_area__", array_of(ty_char, 136));
+    fn->va_area = new_lvar("__va_area__", array_of(ty_char, 200));
   fn->alloca_bottom = new_lvar("__alloca_size__", pointer_to(ty_char));
 
   tok = skip(tok, "{");
@@ -3520,7 +3527,7 @@ static Token *parse_import(Token *tok, bool is_pub)
         if (tok->str[i] == '.')
             tok->str[i] = '/';
     }
-    char *path= NULL;
+    char *path = NULL;
     if (tok->str[0] == 's' && tok->str[1] == 't' && tok->str[2] == 'd')
         path = format("%s/.winc/%s.wc", getenv("HOME"), tok->str);
     else if (tok->str[0] == 'c' && tok->str[1] == 'o' && tok->str[2] == 'r' && tok->str[3] == 'e')

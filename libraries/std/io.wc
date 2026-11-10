@@ -1,3 +1,37 @@
+import "std.sys.write";
+import "std.sys.fd";
+import "std.variadic";
+import "std.cstring";
+
+pub void vprint(const char *fmt, va_list args) {
+    for usize i = 0; fmt[i] != '\0'; i++ {
+        if fmt[i] != '%' {
+            write(FD_STDOUT, &fmt[i], 1);
+            continue;
+        }
+
+        ++i;
+        switch fmt[i] {
+        case 's': {
+            const char *s = (const char *)va_arg_ptr(args);
+            write(FD_STDOUT, s, cstr_len(s));
+            break;
+        }
+        }
+    }
+}
+
+pub void print(const char *fmt, ...) {
+    va_list args;
+    va_start(args, __va_area__);
+    vprint(fmt, args);
+    va_end(args);
+}
+
 pub void println(const char *fmt, ...) {
-    (void)fmt;
+    va_list args;
+    va_start(args, __va_area__);
+    vprint(fmt, args);
+    write(FD_STDOUT, "\n", 1);
+    va_end(args);
 }

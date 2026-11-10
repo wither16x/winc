@@ -43,7 +43,10 @@ static Type *new_type(TypeKind kind, int size, int align) {
 bool is_integer(Type *ty) {
   TypeKind k = ty->kind;
   return k == TY_BOOL || k == TY_CHAR || k == TY_SHORT ||
-         k == TY_INT  || k == TY_LONG || k == TY_ENUM;
+         k == TY_INT  || k == TY_LONG || k == TY_ENUM ||
+         k == TY_U8 || k == TY_U16 || k == TY_U32 || k == TY_U64 ||
+         k == TY_S8 || k == TY_S16 || k == TY_S32 || k == TY_S64 ||
+         k == TY_USIZE || k == TY_SSIZE;
 }
 
 bool is_flonum(Type *ty) {

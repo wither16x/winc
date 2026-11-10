@@ -11,3 +11,7 @@
 compile_commands.json
 .cache/
 /compiler/obj/
+/libraries/obj_std/
+
+# test programs
+/hello_world*

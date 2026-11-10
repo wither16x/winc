@@ -1,0 +1,83 @@
+pub typedef struct {
+  unsigned int gp_offset;
+  unsigned int fp_offset;
+  void *overflow_arg_area;
+  void *reg_save_area;
+} __va_elem;
+
+pub typedef __va_elem va_list[1];
+
+void *__va_arg_mem(__va_elem *ap, int sz, int align) {
+    unsigned long p = (unsigned long)ap->overflow_arg_area;
+    if align > 8
+        p = (p + 15) / 16 * 16;
+    ap->overflow_arg_area = (void *)((p + sz + 7) / 8 * 8);
+    return (void *)p;
+}
+
+void *__va_arg_gp(__va_elem *ap, int sz, int align) {
+    int need = sz > 8 ? 16 : 8;
+    if ap->gp_offset > 48 - need
+        return __va_arg_mem(ap, sz, align);
+
+    void *r = (char *)ap->reg_save_area + ap->gp_offset;
+    ap->gp_offset += need;
+    return r;
+}
+
+void *__va_arg_fp(__va_elem *ap, int sz, int align) {
+    if ap->fp_offset >= 176
+        return __va_arg_mem(ap, sz, align);
+
+    void *r = (char *)ap->reg_save_area + ap->fp_offset;
+    ap->fp_offset += 16;
+    return r;
+}
+
+pub void va_start(va_list ap, void *area) {
+    ap[0] = *(__va_elem *)area;
+}
+
+pub void va_end(va_list ap) {}
+
+pub void va_copy(va_list dest, va_list src) {
+    dest[0] = src[0];
+}
+
+pub char va_arg_char(va_list ap) {
+    return *(char *)__va_arg_gp(ap, 4, 4);
+}
+
+pub int va_arg_int(va_list ap) {
+    return *(int *)__va_arg_gp(ap, 4, 4);
+}
+
+pub unsigned int va_arg_uint(va_list ap) {
+    return *(unsigned int *)__va_arg_gp(ap, 4, 4);
+}
+
+pub long va_arg_long(va_list ap) {
+    return *(long *)__va_arg_gp(ap, 8, 8);
+}
+
+pub unsigned long va_arg_ulong(va_list ap) {
+    return *(unsigned long *)__va_arg_gp(ap, 8, 8);
+}
+
+pub void *va_arg_ptr(va_list ap) {
+    return *(void **)__va_arg_gp(ap, 8, 8);
+}
+
+pub double va_arg_double(va_list ap) {
+    return *(double *)__va_arg_fp(ap, 8, 8);
+}
+
+pub void *va_arg_raw(va_list ap, int klass, int sz, int align) {
+    if klass == 0 {
+        return __va_arg_gp(ap, sz, align);
+    }
+    if klass == 1 {
+        return __va_arg_fp(ap, sz, align);
+    }
+    return __va_arg_mem(ap, sz, align);
+}
