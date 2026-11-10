@@ -12,6 +12,7 @@ compile_commands.json
 .cache/
 /compiler/obj/
 /libraries/obj_std/
+/libaries/libwcstd.a
 
 # test programs
 /hello_world*
