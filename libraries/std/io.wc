@@ -3,9 +3,12 @@ import "std.sys.fd";
 import "std.variadic";
 import "std.cstring";
 
+const char *VPRINT_NULL = "(null)";
+const char *VPRINT_UNSUPPORTED = "(unsupported)";
+
 void print_string(const char *str) {
     if !str {
-        write(FD_STDOUT, "(null)", 6);
+        write(FD_STDOUT, VPRINT_NULL, cstr_len(VPRINT_NULL));
     } else {
         write(FD_STDOUT, str, cstr_len(str));
     }
@@ -26,9 +29,14 @@ pub void vprint(const char *fmt, va_list args) {
             break;
         }
 
+        case 'c': {
+            char ch = (char)va_arg_char(args);
+            write(FD_STDOUT, &ch, 1);
+            break;
+        }
+
         default: {
-            const char *s = "(unsupported)";
-            print_string(s);
+            write(FD_STDOUT, VPRINT_UNSUPPORTED, cstr_len(VPRINT_UNSUPPORTED));
             break;
         }
         }
