@@ -1,0 +1,7 @@
+import "std.io";
+import "std.status";
+
+int main() {
+    println("Hello, world!");
+    return SUCCESS;
+}

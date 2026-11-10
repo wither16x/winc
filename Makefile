@@ -52,4 +52,7 @@ clean:
 	rm -rf $(OBJDIR)
 	find * -type f '(' -name '*~' -o -name '*.o' ')' -exec rm {} ';'
 
-.PHONY: test test-all clean test-stage2
+install:
+	sudo cp -v ./wincc /usr/bin/wincc
+
+.PHONY: test test-all clean test-stage2 install

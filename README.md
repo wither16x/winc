@@ -2,6 +2,25 @@
 Compiler and stuff for Winc (Winc Is Not C), a programming language based on C.
 The compiler is based on chibicc.
 
+## Basic example
+Here is a basic program which uses the [standard library](#standard-library). Save it in a file, for example `hello.wc`.
+```wc
+import "std.io";
+import "std.status";
+
+int main() {
+    println("Hello, world!");
+    return SUCCESS;
+}
+```
+To compile and execute it, run:
+```sh
+wincc --project . hello.wc -o hello -L"$HOME/.winc" -lwcstd
+./hello
+```
+
+Check out the [examples/](examples) directory if you want to see more examples.
+
 ## Project organization
 Organize your project however you want, with Makefiles and stuff.  
 The conventional extension for a Winc file is `.wc`. Headers are not needed unless you wish to use C code.
@@ -16,47 +35,6 @@ Even though `#include` is still available for C headers, modules are a cleaner w
 They are evaluated at compile-time and there is no need to split the interface and the implementation in several files. Also there is no need for header guards or `#pragma once`: a module is never evaluated twice.
 In a module, all symbols are private by default. To export a symbol, place `pub` in front of its definition. This only works with global symbols.
 
-Here is an example:
-```wc
-// person.wc
-
-#include <stdlib.h>
-#include <string.h>
-
-pub struct person {
-    char name[25];
-    unsigned int age;
-};
-
-pub struct person *create_person(const char *name, unsigned int age) {
-    struct person *p = calloc(1, sizeof(*p));
-    if !p
-        return NULL;
-
-    strncpy(p->name, name, strlen(name));
-    p->age = age;
-    return p;
-}
-
-pub void kill_person(struct person *p) {
-    free(p);
-}
-```
-```wc
-// main.wc
-
-#include <stdio.h>
-
-import "person";
-
-int main() {
-    struct person *p = create_person("John Doe", 42);
-    printf("Hi! My name is %s and I am %u years old!\n", p->name, p->age);
-    kill_person(p);
-
-    return 0;
-}
-```
 You can crawl directories using `.`:
 ```wc
 import "lib.net.utils.ipv4";
@@ -72,5 +50,21 @@ wincc --project pathname # other arguments
 * Signed sized types: `s8`, `s16`, `s32`, `s64`
 * Size types: `usize`, `ssize`
 
-## Attributes
+### Attributes
 Winc provides a clean syntax for using attributes. To use them, follow the following pattern: `[[attr, ...]]`. You can also give arguments to attributes using `()` like you would do in a function call.
+
+### Standard library
+Once of Winc's goals is to provide a standard-library which provides more modern structures than the libc. The standard library is divided in two parts:
+* `core`: everything in `core` does not require allocators nor filesystems nor tasks management.
+* `std`: built on top of `core`, `std` provides more structures but relies on an operating system to work.
+
+To install the standard library, run the following commands:
+```sh
+make -C libraries
+cd libraries
+chmod +x install.sh
+./install.sh
+```
+It should be installed in `~/.winc`.
+
+Since `std` uses separated assembly source files to implement some functions, you would need to link your executable with the corresponding objects.
