@@ -3,6 +3,14 @@ import "std.sys.fd";
 import "std.variadic";
 import "std.cstring";
 
+void print_string(const char *str) {
+    if !str {
+        write(FD_STDOUT, "(null)", 6);
+    } else {
+        write(FD_STDOUT, str, cstr_len(str));
+    }
+}
+
 pub void vprint(const char *fmt, va_list args) {
     for usize i = 0; fmt[i] != '\0'; i++ {
         if fmt[i] != '%' {
@@ -14,7 +22,7 @@ pub void vprint(const char *fmt, va_list args) {
         switch fmt[i] {
         case 's': {
             const char *s = (const char *)va_arg_ptr(args);
-            write(FD_STDOUT, s, cstr_len(s));
+            print_string(s);
             break;
         }
         }
