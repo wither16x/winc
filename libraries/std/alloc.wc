@@ -1,8 +1,16 @@
+import "core.memory";
+
 extern void *malloc(usize size);
 extern void free(void *ptr);
 
 pub void *mem_alloc(usize size) {
     return malloc(size);
+}
+
+pub void *mem_zalloc(usize size) {
+    void *ptr = mem_alloc(size);
+    mem_set(ptr, 0, size);
+    return ptr;
 }
 
 pub void mem_free(void *ptr) {
