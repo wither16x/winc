@@ -15,7 +15,7 @@ int main() {
 ```
 To compile and execute it, run:
 ```sh
-wincc --project . hello.wc -o hello -L"$HOME/.winc" -lwcstd
+wincc --project . hello.wc -o hello
 ./hello
 ```
 
@@ -60,11 +60,8 @@ Once of Winc's goals is to provide a standard-library which provides more modern
 
 To install the standard library, run the following commands:
 ```sh
-make -C libraries
 cd libraries
 chmod +x install.sh
 ./install.sh
 ```
 It should be installed in `~/.winc`.
-
-Since `std` uses separated assembly source files to implement some functions, you would need to link your executable with the corresponding objects.

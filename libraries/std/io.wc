@@ -1,4 +1,4 @@
-import "std.sys.write";
+import "std.sys.syscalls";
 import "std.sys.fd";
 import "std.variadic";
 import "std.cstring";

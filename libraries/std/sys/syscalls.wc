@@ -1,0 +1,1 @@
+pub extern ssize write(int fd, const void *buf, usize count);
